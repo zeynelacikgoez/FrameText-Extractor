@@ -1,6 +1,6 @@
 # FrameText Extractor
 
-FrameText Extractor is an open-source tool for optimized text extraction (OCR) from videos. It combines OpenCV, Pillow, and Tesseract to extract text from individual video frames, using multithreading to improve processing performance.
+FrameText Extractor is an open-source tool for optimized text extraction (OCR) from videos. It combines OpenCV, Pillow, and Tesseract to extract text from individual video frames, using multithreading to improve processing performance. It also includes a feature for text correction using a language model.
 
 ## Features
 
@@ -9,6 +9,7 @@ FrameText Extractor is an open-source tool for optimized text extraction (OCR) f
 - **Motion Detection**: Detects changes between frames to avoid unnecessary text extraction on static frames.
 - **Scalable Processing**: Utilizes all available CPU cores for faster execution.
 - **Flexible Customization**: Allows for dynamic adjustment of frame interval, frame size, and motion detection sensitivity.
+- **Text Correction with LLM**: Corrects extracted text using the DeepSeek API and a language model.
 
 ## Requirements
 
@@ -20,6 +21,7 @@ To use this project, you'll need:
 - [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) (installed and available in the system path)
 - [pytesseract](https://github.com/madmaze/pytesseract)
 - [Numpy](https://numpy.org/)
+- [OpenAI](https://openai.com/) (DeepSeek API for text correction)
 
 If you are using Windows, ensure that Tesseract is installed and the path is set correctly.
 
@@ -52,25 +54,38 @@ Install Tesseract OCR:
    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
    ```
 
-2. **Process Video**:
+2. **Set API Key**:
+   Obtain an API key from DeepSeek and set it in the `api_key` variable:
+
+   ```python
+   api_key = "<DeepSeek API Key>"
+   ```
+
+3. **Process Video**:
    Place your video in the same directory or specify the path in the `video_path` variable.
 
-3. **Run the Script**:
+4. **Run the Script**:
 
    ```bash
    python frametext_extractor.py
    ```
 
-   The extracted text will be saved to the output file specified in `output_text`.
+   The extracted and corrected text will be saved to the output file specified in `output_text`.
 
 ## Example Code
 
 ```python
 if __name__ == "__main__":
-    set_tesseract_path()
     video_path = "video.mp4"
-    output_text = "optimized_extracted_text.txt"
-    process_video_optimized(video_path, output_text, frame_interval=1, scale_factor=2, motion_threshold=0.05)
+    api_key = "<DeepSeek API Key>"
+    output_text = "corrected_extracted_text.txt"
+    
+    final_text = process_and_correct_text(video_path, api_key)
+    
+    with open(output_text, 'w', encoding='utf-8') as f:
+        f.write(final_text)
+    
+    logging.info(f"Processing complete. Corrected text saved to {output_text}.")
 ```
 
 ## How it Works
@@ -78,8 +93,9 @@ if __name__ == "__main__":
 1. **Load Video**: The video is loaded, and frames are processed at regular intervals (e.g., 1 frame per second).
 2. **Resize Frames**: Frames are resized to speed up processing.
 3. **Motion Detection**: The script checks if the current frame differs significantly from the previous frame to avoid unnecessary OCR operations.
-4. **Text Extraction**: If motion is detected, the text is extracted using Tesseract OCR.
-5. **Save Results**: The extracted text is saved to a text file.
+4. **Text Extraction**: If motion is detected, text is extracted using Tesseract OCR.
+5. **Text Correction**: Extracted text is processed and corrected using the DeepSeek API and a language model.
+6. **Save Results**: The corrected text is saved to a text file.
 
 ## Customization
 
@@ -92,8 +108,8 @@ You can customize the following parameters to suit your needs:
   ```
   This example processes one frame every two seconds (if `fps = 1`).
 
-- **Frame Size**: Adjust the scaling of the frames to influence processing time. Use the `scale_factor` parameter to resize frames. For example, to resize frames to one-third of their original size:
-  
+- **Frame Size**: Adjust the scaling of the frames to influence processing time. Use the `scale_factor` parameter to resize frames. For example:
+
   ```python
   process_video_optimized(video_path, output_text, scale_factor=3)
   ```
