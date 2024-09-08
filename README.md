@@ -57,7 +57,7 @@ Install Tesseract OCR:
 3. **Run the Script**:
 
    ```bash
-   python your_script_name.py
+   python frametext_extractor.py
    ```
 
    The extracted text will be saved to the output file specified in `output_text`.
