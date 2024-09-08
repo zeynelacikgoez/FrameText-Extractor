@@ -1,6 +1,6 @@
-# VidOCR Optimizer
+# FrameText Extractor
 
-VidOCR Optimizer is an open-source tool for optimized text extraction (OCR) from videos. It combines OpenCV, Pillow, and Tesseract to extract text from individual video frames, using multithreading to improve processing performance.
+FrameText Extractor is an open-source tool for optimized text extraction (OCR) from videos. It combines OpenCV, Pillow, and Tesseract to extract text from individual video frames, using multithreading to improve processing performance.
 
 ## Features
 
