@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 import logging
 from typing import List, Tuple
 from openai import OpenAI
+import re
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -67,16 +68,23 @@ def process_video_optimized(video_path: str, frame_interval: int = 1, scale_fact
     logging.info("Videoverarbeitung abgeschlossen.")
     return extracted_text
 
+def extract_output_content(text: str) -> str:
+    match = re.search(r'<output>(.*?)</output>', text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    return text  # Falls keine Tags gefunden wurden, geben wir den gesamten Text zurück
+
 def correct_text_with_llm(text: str, client: OpenAI) -> str:
     response = client.chat.completions.create(
         model="deepseek-chat",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant. Clean up the following text by removing all unnecessary characters such as special symbols, double spaces, random numbers, or strings. Correct any spelling errors, check the capitalization, and format the text for readability. Remove anything that is not relevant to the content (e.g., timestamps or irrelevant metadata), while preserving the meaning and structure of the original text."},
+            {"role": "system", "content": "You are a helpful assistant. Clean up the following text by removing all unnecessary characters such as special symbols, double spaces, random numbers, or strings. Correct any spelling errors, check the capitalization, and format the text for readability. Remove anything that is not relevant to the content (e.g., timestamps or irrelevant metadata), while preserving the meaning and structure of the original text. Wrap your output in <output> tags."},
             {"role": "user", "content": text},
         ],
         stream=False
     )
-    return response.choices[0].message.content
+    raw_response = response.choices[0].message.content
+    return extract_output_content(raw_response)
 
 def process_and_correct_text(video_path: str, api_key: str, chunk_size: int = 1000) -> str:
     set_tesseract_path()
