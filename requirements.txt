@@ -1,4 +1,6 @@
-opencv-python==4.8.0.76
-numpy==1.21.0
-pytesseract==0.3.10
-Pillow==9.2.0
+opencv-python
+numpy
+pytesseract
+pillow
+concurrent-log-handler
+openai
