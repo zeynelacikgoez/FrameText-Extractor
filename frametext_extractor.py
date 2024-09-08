@@ -26,7 +26,7 @@ def process_frame(frame: np.ndarray) -> Tuple[np.ndarray, str]:
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     return gray_frame, extract_text_with_pillow(gray_frame)
 
-def process_video_optimized(video_path: str, output_text: str):
+def process_video_optimized(video_path: str, output_text: str, frame_interval: int = 1, scale_factor: int = 2, motion_threshold: float = 0.05):
     cap = cv2.VideoCapture(video_path)
     
     if not cap.isOpened():
@@ -36,27 +36,30 @@ def process_video_optimized(video_path: str, output_text: str):
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) // 2)
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) // 2)
+    # Frame size scaling
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) // scale_factor)
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) // scale_factor)
     
     prev_frame = None
     extracted_text: List[str] = []
     
     with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
         futures = []
-        for _ in range(0, frame_count, fps):  # Process one frame per second
-            cap.set(cv2.CAP_PROP_POS_FRAMES, _)
+        for frame_num in range(0, frame_count, fps * frame_interval):  # Frame interval adjustable
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
             ret, frame = cap.read()
             if not ret:
                 break
             
+            # Resize the frame based on scale factor
             frame = cv2.resize(frame, (width, height))
             futures.append(executor.submit(process_frame, frame))
         
         for future in futures:
             gray_frame, text = future.result()
             
-            if prev_frame is not None and detect_movement(prev_frame, gray_frame):
+            # Detect movement with the given threshold
+            if prev_frame is not None and detect_movement(prev_frame, gray_frame, motion_threshold):
                 if text.strip():
                     extracted_text.append(text.strip())
             
@@ -72,4 +75,4 @@ if __name__ == "__main__":
     set_tesseract_path()
     video_path = "video.mp4"
     output_text = "optimized_extracted_text.txt"
-    process_video_optimized(video_path, output_text)
+    process_video_optimized(video_path, output_text, frame_interval=1, scale_factor=2, motion_threshold=0.05)
