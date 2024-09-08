@@ -8,6 +8,7 @@ FrameText Extractor is an open-source tool for optimized text extraction (OCR) f
 - **Optimized Video Processing**: Processes frames at regular intervals (e.g., 1 frame per second) and uses multithreading for better performance.
 - **Motion Detection**: Detects changes between frames to avoid unnecessary text extraction on static frames.
 - **Scalable Processing**: Utilizes all available CPU cores for faster execution.
+- **Flexible Customization**: Allows for dynamic adjustment of frame interval, frame size, and motion detection sensitivity.
 
 ## Requirements
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     set_tesseract_path()
     video_path = "video.mp4"
     output_text = "optimized_extracted_text.txt"
-    process_video_optimized(video_path, output_text)
+    process_video_optimized(video_path, output_text, frame_interval=1, scale_factor=2, motion_threshold=0.05)
 ```
 
 ## How it Works
@@ -84,20 +85,31 @@ if __name__ == "__main__":
 
 You can customize the following parameters to suit your needs:
 
-- **Frame Interval**: Process more or fewer frames per second by adjusting the step value in the loop:
+- **Frame Interval**: Process more or fewer frames by adjusting the interval between frames. This is done by setting the `frame_interval` parameter when calling the `process_video_optimized` function:
   
   ```python
-  for _ in range(0, frame_count, fps):  # Process one frame per second
+  process_video_optimized(video_path, output_text, frame_interval=2)
   ```
+  This example processes one frame every two seconds (if `fps = 1`).
 
-- **Frame Size**: Adjust the scaling of the frames to influence processing time:
-
+- **Frame Size**: Adjust the scaling of the frames to influence processing time. Use the `scale_factor` parameter to resize frames. For example, to resize frames to one-third of their original size:
+  
   ```python
-  width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) // 2)
-  height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) // 2)
+  process_video_optimized(video_path, output_text, scale_factor=3)
   ```
 
-- **Motion Threshold**: Adjust the sensitivity of motion detection by changing the `threshold` parameter in the `detect_movement()` function.
+- **Motion Threshold**: Adjust the sensitivity of motion detection by changing the `motion_threshold` parameter. A higher threshold reduces sensitivity (i.e., fewer movements are detected), while a lower threshold increases sensitivity:
+  
+  ```python
+  process_video_optimized(video_path, output_text, motion_threshold=0.1)
+  ```
+
+### Full Example:
+You can combine all these options to fine-tune your video processing:
+
+```python
+process_video_optimized(video_path, output_text, frame_interval=1, scale_factor=2, motion_threshold=0.05)
+```
 
 ## Contributing
 
