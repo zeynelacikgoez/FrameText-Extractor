@@ -33,17 +33,26 @@ You can install the necessary Python libraries with:
 pip install opencv-python pillow pytesseract numpy
 ```
 
-Install Tesseract OCR:
+**Install Tesseract OCR:**
 
 - **Windows**: [Tesseract Download](https://github.com/tesseract-ocr/tesseract/wiki)
 - **macOS**: Install via Homebrew:
   ```bash
   brew install tesseract
   ```
+  **Install additional language packages**:
+  ```bash
+  brew install tesseract-lang
+  ```
 - **Linux**: Install via your system’s package manager (e.g., `apt` on Ubuntu):
   ```bash
   sudo apt install tesseract-ocr
   ```
+  **Install additional language packages**:
+  ```bash
+  sudo apt install tesseract-ocr-[language-code]
+  ```
+  Replace `[language-code]` with the specific code for the language you need (e.g., `deu` for German).
 
 ## Usage
 
