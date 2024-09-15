@@ -1,6 +1,4 @@
 opencv-python
 numpy
 pytesseract
-pillow
-concurrent-log-handler
 openai
