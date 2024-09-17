@@ -9,7 +9,7 @@ FrameText Extractor is an open-source tool for optimized text extraction (OCR) f
 - **Motion Detection**: Detects changes between frames to avoid unnecessary text extraction on static frames.
 - **Scalable Processing**: Utilizes all available CPU cores for faster execution.
 - **Flexible Customization**: Allows for dynamic adjustment of frame interval, frame size, and motion detection sensitivity.
-- **Text Correction with LLM**: Corrects extracted text using the DeepSeek API and a language model.
+- **Text Correction with LLM**: Corrects extracted text using the DeepSeek API a language model.
 
 ## Requirements
 
