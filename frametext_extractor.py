@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import pytesseract
+import shutil
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
