@@ -1,4 +1,4 @@
-# FrameText Extractor
+# FrameTextExtractor
 
 FrameText Extractor is an open-source tool for optimized text extraction (OCR) from videos. It combines OpenCV, Pillow, and Tesseract to extract text from individual video frames, using multithreading to improve processing performance. It also includes a feature for text correction using a language model.
 
